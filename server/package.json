@@ -1,0 +1,20 @@
+{
+	"name": "server",
+	"version": "1.0.0",
+	"main": "src/server.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node --env-file=.env server.js",
+		"dev": "node --env-file=.env --watch server.js"
+	},
+	"keywords": [],
+	"author": "Sharif Md. Minhaz",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {
+		"@types/node": "^22.13.4"
+	},
+	"dependencies": {
+		"mysql2": "^3.12.0"
+	}
+}
