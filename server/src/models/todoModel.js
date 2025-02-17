@@ -16,10 +16,11 @@ class TodoModel {
 		]);
 	}
 
-	async updateTodo(id, title, description) {
-		return db.query("UPDATE todos SET title = ?, description = ? WHERE id = ?", [
+	async updateTodo(id, title, description, status) {
+		return db.query("UPDATE todos SET title = ?, description = ?, status = ? WHERE id = ?", [
 			title,
 			description,
+			status,
 			id,
 		]);
 	}

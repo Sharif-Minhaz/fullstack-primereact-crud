@@ -1,6 +1,6 @@
 const mysql = require("mysql2");
 
-export class Database {
+class Database {
 	constructor() {
 		this.connection = mysql.createConnection({
 			host: process.env.DB_HOST,
@@ -27,3 +27,5 @@ export class Database {
 		});
 	}
 }
+
+module.exports = new Database();
