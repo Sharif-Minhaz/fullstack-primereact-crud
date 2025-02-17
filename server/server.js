@@ -6,8 +6,14 @@ const Tool = require("./src/utils/tool");
 const server = http.createServer(async (req, res) => {
 	try {
 		res.setHeader("Access-Control-Allow-Origin", "*");
-		res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+		res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
 		res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+		// handle the preflight request
+		if (req.method === "OPTIONS") {
+			res.writeHead(204); // No Content
+			return res.end();
+		}
 
 		// attach request body
 		req.body = await Tool.parseJSON(req);
