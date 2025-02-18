@@ -24,12 +24,14 @@ export default function Pagination({
 	};
 
 	return (
-		<Paginator
-			first={first}
-			rows={rows}
-			totalRecords={totalRecords}
-			rowsPerPageOptions={rowsPerPageOptions}
-			onPageChange={handlePageChange}
-		/>
+		<div className="mt-4">
+			<Paginator
+				first={first}
+				rows={rows}
+				totalRecords={totalRecords}
+				rowsPerPageOptions={rowsPerPageOptions}
+				onPageChange={handlePageChange}
+			/>
+		</div>
 	);
 }

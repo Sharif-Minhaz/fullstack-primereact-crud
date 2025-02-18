@@ -2,11 +2,15 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 
-export default function Search() {
+export default function Search({ onSearch }: { onSearch: (value: string) => void }) {
 	return (
 		<IconField className="w-full z-10" iconPosition="left">
 			<InputIcon className="pi pi-search"> </InputIcon>
-			<InputText className="w-full" placeholder="Search" />
+			<InputText
+				onChange={(e) => onSearch(e.target.value)}
+				className="w-full"
+				placeholder="Search"
+			/>
 		</IconField>
 	);
 }

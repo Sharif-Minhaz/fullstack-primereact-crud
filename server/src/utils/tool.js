@@ -1,3 +1,5 @@
+const ResponseHandler = require("./responseHandler");
+
 class Tool {
 	static getParsedId(req) {
 		const id = req.url?.split("/")[2];
