@@ -82,7 +82,7 @@ export default function Todo({
 			<Toast ref={toast} />
 			{/* Skeleton Loader for Loading State */}
 			{loading ? (
-				<div className="flex w-full items-center justify-between p-4 mb-2 bg-white border border-gray-200 rounded-lg shadow-sm">
+				<div className="flex w-full align-items-center justify-content-between p-4 mb-2 bg-white border-round-lg shadow-1">
 					<Skeleton shape="circle" size="2rem" />
 					<Skeleton width="80%" height="1.5rem" />
 					<div className="flex gap-2">
@@ -91,23 +91,26 @@ export default function Todo({
 					</div>
 				</div>
 			) : (
-				<div className="flex w-full items-center justify-between p-4 mb-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-					<div className="flex items-center space-x-3">
+				<div className="flex w-full align-items-center justify-content-between px-4 py-2 mb-2 bg-white border-round-lg shadow-1 hover:shadow-2 transition-linear transition-duration-200">
+					<div className="flex align-items-center gap-3">
 						<Checkbox checked={checked} onChange={handleStatus} className="w-5 h-5" />
-						<h3
-							className={`text-lg font-medium ${
-								checked ? "line-through text-gray-400" : "text-gray-800"
-							} transition-all duration-200`}
-						>
-							<Link to={`/todo/${item.id}`} className="hover:underline">
+						<Link to={`/todo/${item.id}`} className="hover:underline no-underline">
+							<h3
+								style={{ textWrap: "nowrap" }}
+								className={`text-lg font-medium ${
+									checked
+										? "line-through text-title-color-completed"
+										: "text-title-color"
+								} transition-linear transition-duration-200`}
+							>
 								{item.title}
-							</Link>
-						</h3>
+							</h3>
+						</Link>
 					</div>
-					<div className="flex items-center gap-2">
+					<div className="flex align-items-center gap-2">
 						<Link to={`/manage`} state={item}>
 							<Button
-								className="!size-[36px]"
+								className="size-36px"
 								rounded
 								text
 								raised
@@ -118,7 +121,7 @@ export default function Todo({
 						</Link>
 						<Button
 							onClick={confirm}
-							className="!size-[36px]"
+							className="size-36px"
 							size="small"
 							rounded
 							icon="pi pi-trash"

@@ -65,14 +65,14 @@ export default function Form() {
 	return (
 		<>
 			<Toast ref={toast} />
-			<div className="flex justify-center items-center min-h-screen p-4">
-				<Card className="w-full max-w-2xl shadow-lg rounded-xl">
-					<h2 className="text-xl font-semibold text-gray-700 mb-4">
+			<div className="flex justify-content-center align-items-center min-h-screen p-4">
+				<Card className="w-full max-w-2xl shadow-3 rounded-xl">
+					<h2 className="text-xl font-semibold text-gray-700 mb-4 mt-0">
 						{isForUpdate ? "Update Todo" : "Create a New Todo"}
 					</h2>
-					<form onSubmit={handleSubmit} className="space-y-6">
+					<form onSubmit={handleSubmit}>
 						{/* Title Input */}
-						<div className="flex flex-col gap-2">
+						<div className="flex flex-column gap-2 mb-3">
 							<label htmlFor="title" className="font-medium text-gray-600">
 								Title
 							</label>
@@ -84,12 +84,12 @@ export default function Form() {
 								onChange={(e) =>
 									setFormData((prev) => ({ ...prev, title: e.target?.value }))
 								}
-								className=" w-full border-gray-300"
+								className=" w-full"
 							/>
 						</div>
 
 						{/* Description Editor */}
-						<div className="flex flex-col gap-2">
+						<div className="flex flex-column gap-2">
 							<label htmlFor="description" className="font-medium text-gray-600">
 								Description
 							</label>
@@ -104,12 +104,12 @@ export default function Form() {
 									}))
 								}
 								style={{ height: "200px" }}
-								className="bg-white shadow-sm rounded-md"
+								className="bg-white shadow-1 border-round-md"
 							/>
 						</div>
 
 						{/* Buttons */}
-						<div className="flex justify-between items-center -mt-1">
+						<div className="flex justify-content-between align-items-center mt-3">
 							<Link to="/">
 								<Button
 									type="button"
@@ -119,14 +119,14 @@ export default function Form() {
 									className="p-button-text !px-0"
 								/>
 							</Link>
-							<div className="!space-x-2">
+							<div>
 								<Button
 									type="submit"
 									label={isForUpdate ? "Update" : "Save"}
 									size="small"
 									icon={isForUpdate ? "pi pi-sync" : "pi pi-check"}
 									severity={isForUpdate ? "warning" : "success"}
-									className="!rounded-full"
+									className="border-md mr-2"
 								/>
 								<Link to="/">
 									<Button
@@ -135,7 +135,7 @@ export default function Form() {
 										size="small"
 										icon="pi pi-times"
 										severity="danger"
-										className="!rounded-full"
+										className="border-md"
 									/>
 								</Link>
 							</div>

@@ -38,7 +38,7 @@ export default function Home() {
 
 	if (error) {
 		return (
-			<div className="w-full flex flex-col items-center justify-center mt-10">
+			<div className="flex flex-column align-align-items-center justify-content-center gap-3 mt-10">
 				<h1 className="text-2xl font-semibold text-red-500">Something went wrong</h1>
 				<Button label="Retry" icon="pi pi-refresh" onClick={refetch} className="mt-3" />
 			</div>
@@ -46,16 +46,16 @@ export default function Home() {
 	}
 
 	return (
-		<div className="w-full mx-auto max-w-3xl p-4">
+		<div className="w-full mx-auto max-w-48rem p-3">
 			{/* Search Bar & Add Button */}
-			<div className="flex gap-3 items-center justify-between mb-4">
+			<div className="flex gap-2 align-align-items-center justify-content-between mb-3">
 				{loading ? (
-					<Skeleton height="2.5rem" width="100%" className="rounded-md" />
+					<Skeleton height="2.5rem" width="100%" className="border-round-md" />
 				) : (
 					<Search onSearch={handleSearch} />
 				)}
 				{loading ? (
-					<Skeleton width="40px" height="40px" className="rounded-full" />
+					<Skeleton width="40px" height="40px" className="border-circle" />
 				) : (
 					<Link to="/manage">
 						<Button
@@ -73,15 +73,19 @@ export default function Home() {
 
 			{/* Skeleton Loading for Todos */}
 			{loading ? (
-				<div className="space-y-4">
+				<div>
 					{Array.from({ length: 5 }).map((_, index) => (
 						<div
 							key={index}
-							className="p-4 flex justify-between bg-white border border-gray-200 rounded-lg shadow-sm"
+							className="p-4 mb-2 flex justify-content-between bg-white border-round-lg shadow-1"
 						>
-							<div className="flex items-center !space-x-3">
+							<div className="flex align-items-center gap-3">
 								<Skeleton shape="circle" size="2rem" />
-								<Skeleton width="250px" height="1.5rem" className="rounded-md" />
+								<Skeleton
+									width="250px"
+									height="1.5rem"
+									className="border-round-md"
+								/>
 							</div>
 							<div className="flex gap-2">
 								<Skeleton shape="circle" size="2rem" />

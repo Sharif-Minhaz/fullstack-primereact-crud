@@ -11,8 +11,8 @@ export default function SingleTodo() {
 	const todo = item?.data[0];
 
 	return (
-		<div className="w-full max-w-3xl mx-auto p-4">
-			<Card className="shadow-lg rounded-lg">
+		<div className="w-full max-w-36rem mx-auto p-4">
+			<Card className="shadow-3 border-round-lg">
 				{loading ? (
 					<div>
 						<Skeleton width="70%" height="2rem" className="mb-4" />
@@ -24,9 +24,9 @@ export default function SingleTodo() {
 					</div>
 				) : (
 					<div>
-						<h2 className="text-2xl font-semibold mb-4">{todo?.title}</h2>
+						<h2 className="text-2xl font-semibold mb-4 mt-0">{todo?.title}</h2>
 						<div
-							className="prose max-w-none"
+							className="max-w-none"
 							dangerouslySetInnerHTML={{ __html: todo?.description || "" }}
 						/>
 						<div className="mt-6">
@@ -36,7 +36,7 @@ export default function SingleTodo() {
 									label="Back"
 									size="small"
 									icon="pi pi-arrow-left"
-									className="!rounded-full"
+									className="border-3xl"
 								/>
 							</Link>
 						</div>

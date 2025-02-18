@@ -1,2 +1,33 @@
-@import "tailwindcss";
-@plugin '@tailwindcss/typography';
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.max-w-36rem {
+    max-width: 36rem;
+}
+
+.max-w-48rem {
+    max-width: 48rem;
+}
+
+.bg-slate-100 {
+    background-color: #f1f5f9;
+}
+
+.size-36px {
+    height: 36px;
+    width: 36px;
+}
+
+.text-title-color {
+    color: #2d3748;
+}
+
+.text-title-color-completed {
+    color: #a0aec0;
+}

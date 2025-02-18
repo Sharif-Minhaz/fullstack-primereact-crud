@@ -24,13 +24,14 @@ export default function Pagination({
 	};
 
 	return (
-		<div className="mt-4">
+		<div className="mt-3">
 			<Paginator
 				first={first}
 				rows={rows}
 				totalRecords={totalRecords}
 				rowsPerPageOptions={rowsPerPageOptions}
 				onPageChange={handlePageChange}
+				className="py-3"
 			/>
 		</div>
 	);
