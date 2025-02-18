@@ -10,9 +10,8 @@ import { useState } from "react";
 export default function Home() {
 	const [item, loading, error, refetch] = useFetch("/todos");
 	const [first, setFirst] = useState(0);
-	const [rows, setRows] = useState(5); // Default rows per page
+	const [rows, setRows] = useState(5);
 
-	// Ensure data is available before slicing
 	const paginatedData = item?.data?.slice(first, first + rows) || [];
 
 	const handlePageChange = (newFirst: number, newRows: number) => {
@@ -24,7 +23,7 @@ export default function Home() {
 			<div className="flex items-center w-full gap-2 mb-4">
 				<Search />
 				<Link to="/manage">
-					<Button icon="pi pi-plus" severity="help" />
+					<Button icon="pi pi-plus" />
 				</Link>
 			</div>
 			<ConfirmPopup />

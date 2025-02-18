@@ -2,7 +2,7 @@ const db = require("../config/db");
 
 class TodoModel {
 	async getAllTodos() {
-		return db.query("SELECT * FROM todos");
+		return db.query("SELECT * FROM todos ORDER BY id DESC");
 	}
 
 	async getTodoById(id) {

@@ -4,47 +4,66 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Link, useLocation } from "react-router";
 import { Toast } from "primereact/toast";
+import { usePost } from "../hooks/usePost";
+import { usePut } from "../hooks/usePut";
 
 export default function Form() {
-	const [formData, setFormData] = useState({ title: "", description: "" });
+	const [formData, setFormData] = useState({ id: NaN, title: "", description: "" });
+	const { postData } = usePost("/todos");
+	const { updateData } = usePut("/todos");
 	const location = useLocation();
 	const toast = useRef<Toast>(null);
 
+	const isForUpdate = !!location?.state;
+
 	useEffect(() => {
-		if (location.state) {
+		if (isForUpdate) {
 			setFormData(location.state);
 		}
-	}, [location]);
+	}, [isForUpdate, location.state]);
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
 		try {
-			e.preventDefault();
-			const resBuffer = await fetch(`${import.meta.env.VITE_API_BASE_URL}/todos`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(formData),
-			});
-			const res = await resBuffer.json();
-			if (res.success) {
+			if (isForUpdate) {
+				const res = await updateData(formData.id, {
+					title: formData.title,
+					description: formData.description,
+				});
+				if (res.success) {
+					toast?.current?.show({
+						severity: "info",
+						summary: "Info",
+						detail: "Todo updated successfully",
+					});
+					return;
+				}
 				toast?.current?.show({
-					severity: "info",
-					summary: "Info",
-					detail: "New todo added successfully",
+					severity: "error",
+					summary: "Error",
+					detail: "Something went wrong",
 				});
-				setFormData({
-					title: "",
-					description: "",
+			} else {
+				const res = await postData(JSON.stringify(formData));
+				if (res.success) {
+					toast?.current?.show({
+						severity: "info",
+						summary: "Info",
+						detail: "New todo added successfully",
+					});
+					setFormData({
+						id: NaN,
+						title: "",
+						description: "",
+					});
+					return;
+				}
+				toast?.current?.show({
+					severity: "error",
+					summary: "Error",
+					detail: "Something went wrong",
 				});
-				return;
 			}
-
-			toast?.current?.show({
-				severity: "error",
-				summary: "Error",
-				detail: "Something went wrong",
-			});
 		} catch (err: unknown) {
 			console.error(err);
 			toast?.current?.show({
@@ -90,10 +109,10 @@ export default function Form() {
 					<div className="!space-x-2">
 						<Button
 							type="submit"
-							label="Create"
+							label={isForUpdate ? "Update" : "Save"}
 							size="small"
-							icon="pi pi-plus"
-							severity="success"
+							icon={isForUpdate ? "pi pi-sync" : "pi pi-check"}
+							severity={isForUpdate ? "warning" : "success"}
 							loading={false}
 						/>
 						<Link to="/">

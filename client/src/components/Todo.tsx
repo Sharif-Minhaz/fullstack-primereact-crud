@@ -1,13 +1,15 @@
 import { Button } from "primereact/button";
-import { Checkbox } from "primereact/checkbox";
+import { Checkbox, CheckboxChangeEvent } from "primereact/checkbox";
 import { confirmPopup } from "primereact/confirmpopup";
 import { Toast } from "primereact/toast";
 import { MouseEvent, useRef, useState } from "react";
 import { Link } from "react-router";
+import { usePut } from "../hooks/usePut";
 
 export default function Todo({ item, refetch }: { item: Todo; refetch: () => void }) {
-	const [checked, setChecked] = useState(false);
+	const [checked, setChecked] = useState(item.status === "completed");
 	const toast = useRef<Toast>(null);
+	const { updateData } = usePut("/todos");
 
 	const accept = () => {
 		handleDelete();
@@ -51,16 +53,29 @@ export default function Todo({ item, refetch }: { item: Todo; refetch: () => voi
 		}
 	};
 
+	const handleStatus = async (e: CheckboxChangeEvent) => {
+		try {
+			setChecked(e.checked as boolean);
+			const res = await updateData(item.id, {
+				status: e.checked ? "completed" : "pending",
+				// default values
+				title: item.title,
+				description: item.description,
+			});
+			if (!res.success) {
+				setChecked(!e.checked);
+			}
+		} catch (error: unknown) {
+			console.error(error);
+		}
+	};
+
 	return (
 		<div>
 			<Toast ref={toast} />
 			<div className="flex w-full items-center justify-between p-4 mb-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
 				<div className="flex w-full items-center space-x-3">
-					<Checkbox
-						checked={checked}
-						onChange={(e) => setChecked(e.checked as boolean)}
-						className="w-5 h-5"
-					/>
+					<Checkbox checked={checked} onChange={handleStatus} className="w-5 h-5" />
 					<h3
 						className={`text-lg ${
 							checked ? "line-through text-gray-400" : "text-gray-800"

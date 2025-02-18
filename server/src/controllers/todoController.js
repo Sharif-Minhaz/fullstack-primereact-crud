@@ -44,9 +44,12 @@ class TodoController {
 		try {
 			const { title, description, status } = req.body;
 
-			const newStatus = status === "on" ? "completed" : "pending";
+			const todo = await TodoModel.updateTodo(id, title, description, status);
 
-			const todo = await TodoModel.updateTodo(id, title, description, newStatus);
+			if (!todo.affectedRows) {
+				return ResponseHandler.badRequest(res, new Error("Todo doesn't exist"));
+			}
+
 			ResponseHandler.success(res, todo);
 		} catch (error) {
 			ResponseHandler.error(res, error);
