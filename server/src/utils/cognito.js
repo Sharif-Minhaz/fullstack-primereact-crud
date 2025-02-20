@@ -43,10 +43,6 @@ class Cognito {
 			const clientId = process.env.AWS_COGNITO_APP_ID;
 			const clientSecret = process.env.AWS_COGNITO_APP_SECRET;
 
-			console.log("Attempting to connect to:", host);
-			console.log("Redirect URI:", redirectUri);
-			console.log("Code received:", code);
-
 			try {
 				const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
 
@@ -55,8 +51,6 @@ class Cognito {
 					code,
 					redirect_uri: redirectUri,
 				});
-
-				console.log("Post data (encoded):", postData);
 
 				const options = {
 					hostname: host,
@@ -72,14 +66,6 @@ class Cognito {
 					rejectUnauthorized: true,
 				};
 
-				console.log("Making request with options:", {
-					...options,
-					headers: {
-						...options.headers,
-						Authorization: "Basic ***",
-					},
-				});
-
 				const req = https.request(options);
 
 				req.setTimeout(10000, () => {
@@ -88,9 +74,6 @@ class Cognito {
 				});
 
 				req.on("response", (res) => {
-					console.log(`Response Status Code: ${res.statusCode}`);
-					console.log("Response Headers:", res.headers);
-
 					let data = "";
 
 					res.on("data", (chunk) => {
@@ -99,9 +82,7 @@ class Cognito {
 
 					res.on("end", () => {
 						try {
-							console.log("Raw response:", data);
 							const parsedData = JSON.parse(data);
-							console.log("Parsed response:", parsedData);
 
 							if (res.statusCode >= 400) {
 								reject(

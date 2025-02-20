@@ -10,12 +10,10 @@ class TodoModel {
 	}
 
 	async createTodo(title, description, user_id) {
-		console.log(title, description, user_id);
-		return db.query("INSERT INTO todos (title, description, user) VALUES (?, ?, ?)", [
-			title,
-			description,
-			user_id,
-		]);
+		return db.query(
+			"INSERT INTO todos (title, description, status, user) VALUES (?, ?, ?, ?)",
+			[title, description, "pending", user_id]
+		);
 	}
 
 	async updateTodo(id, title, description, status, user_id) {
