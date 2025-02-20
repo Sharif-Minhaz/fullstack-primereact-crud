@@ -29,5 +29,13 @@ body {
 }
 
 .text-title-color-completed {
-    color: #a0aec0;
+    color: #777e86;
+}
+
+.mt-9 {
+    margin-top: 6rem;
+}
+
+.mt-10 {
+    margin-top: 7rem;
 }

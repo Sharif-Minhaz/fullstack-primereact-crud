@@ -65,13 +65,12 @@ export default function Form() {
 	return (
 		<>
 			<Toast ref={toast} />
-			<div className="flex justify-content-center align-items-center min-h-screen p-4">
-				<Card className="w-full max-w-2xl shadow-3 rounded-xl">
+			<div className="flex justify-content-center p-4">
+				<Card className="w-full max-w-2xl shadow-3">
 					<h2 className="text-xl font-semibold text-gray-700 mb-4 mt-0">
 						{isForUpdate ? "Update Todo" : "Create a New Todo"}
 					</h2>
 					<form onSubmit={handleSubmit}>
-						{/* Title Input */}
 						<div className="flex flex-column gap-2 mb-3">
 							<label htmlFor="title" className="font-medium text-gray-600">
 								Title
@@ -88,7 +87,6 @@ export default function Form() {
 							/>
 						</div>
 
-						{/* Description Editor */}
 						<div className="flex flex-column gap-2">
 							<label htmlFor="description" className="font-medium text-gray-600">
 								Description
@@ -103,12 +101,11 @@ export default function Form() {
 										description: e.htmlValue as string,
 									}))
 								}
-								style={{ height: "200px" }}
+								style={{ height: "180px" }}
 								className="bg-white shadow-1 border-round-md"
 							/>
 						</div>
 
-						{/* Buttons */}
 						<div className="flex justify-content-between align-items-center mt-3">
 							<Link to="/">
 								<Button
@@ -116,7 +113,7 @@ export default function Form() {
 									label="Back"
 									size="small"
 									icon="pi pi-arrow-left"
-									className="p-button-text !px-0"
+									className="p-button-text px-0"
 								/>
 							</Link>
 							<div>

@@ -94,7 +94,10 @@ export default function Todo({
 				<div className="flex w-full align-items-center justify-content-between px-4 py-2 mb-2 bg-white border-round-lg shadow-1 hover:shadow-2 transition-linear transition-duration-200">
 					<div className="flex align-items-center gap-3">
 						<Checkbox checked={checked} onChange={handleStatus} className="w-5 h-5" />
-						<Link to={`/todo/${item.id}`} className="hover:underline no-underline">
+						<Link
+							to={`/todo/${item.id}`}
+							className={`${checked ? "" : "hover:underline"} no-underline`}
+						>
 							<h3
 								style={{ textWrap: "nowrap" }}
 								className={`text-lg font-medium ${

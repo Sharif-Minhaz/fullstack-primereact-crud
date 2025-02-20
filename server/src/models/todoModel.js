@@ -1,28 +1,28 @@
 const db = require("../config/db");
 
 class TodoModel {
-	async getAllTodos() {
-		return db.query("SELECT * FROM todos ORDER BY id DESC");
+	async getAllTodos(user_id) {
+		return db.query("SELECT * FROM todos WHERE user = ? ORDER BY id DESC", [user_id]);
 	}
 
 	async getTodoById(id) {
 		return db.query("SELECT * FROM todos WHERE id = ?", [id]);
 	}
 
-	async createTodo(title, description) {
-		return db.query("INSERT INTO todos (title, description) VALUES (?, ?)", [
+	async createTodo(title, description, user_id) {
+		console.log(title, description, user_id);
+		return db.query("INSERT INTO todos (title, description, user) VALUES (?, ?, ?)", [
 			title,
 			description,
+			user_id,
 		]);
 	}
 
-	async updateTodo(id, title, description, status) {
-		return db.query("UPDATE todos SET title = ?, description = ?, status = ? WHERE id = ?", [
-			title,
-			description,
-			status,
-			id,
-		]);
+	async updateTodo(id, title, description, status, user_id) {
+		return db.query(
+			"UPDATE todos SET title = ?, description = ?, status = ?, user = ? WHERE id = ?",
+			[title, description, status, user_id, id]
+		);
 	}
 
 	async deleteTodo(id) {

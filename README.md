@@ -72,7 +72,7 @@ project-root/
     ```sh
     npm run dev
     ```
-4. Open **[http://localhost:5173](http://localhost:5173/)** to see the app running.
+4. Open **[http://localhost:3000](http://localhost:3000/)** to see the app running.
 
 ## 📌 API Endpoints
 

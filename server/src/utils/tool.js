@@ -1,3 +1,4 @@
+const querystring = require("querystring");
 const ResponseHandler = require("./responseHandler");
 
 class Tool {
@@ -26,6 +27,18 @@ class Tool {
 			});
 			req.on("error", reject);
 		});
+	}
+
+	static parseUrl(req) {
+		try {
+			const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+			const path = parsedUrl.pathname;
+			const query = Object.fromEntries(parsedUrl.searchParams);
+
+			return { path, query, parsedUrl };
+		} catch (error) {
+			throw new Error("Error occurred while parsing URL: " + error.message);
+		}
 	}
 }
 
