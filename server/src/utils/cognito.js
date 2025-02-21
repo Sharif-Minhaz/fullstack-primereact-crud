@@ -20,7 +20,7 @@ const querystring = require("querystring");
 class Cognito {
 	constructor() {
 		this.IdentityProvider = new CognitoIdentityProvider({
-			region: process.env.AWS_COGNITO_REGION,
+			region: process.env.AWS_REGION,
 		});
 
 		this.tokens = {};

@@ -21,7 +21,7 @@ project-root/
 │   ├── public/
 │   ├── index.html
 │   ├── vite.config.js
-│── server/  # Backend (Node.js + MySQL)
+│── server/  # Backend (Node.js + MySQL + AWS)
 │   ├── src/
 │   │   ├── config/db.js
 │   │   ├── models/todoModel.js
@@ -39,21 +39,47 @@ project-root/
 ### 1️⃣ Setup Backend (Server)
 
 1. **Navigate to the `server/` folder:**
+
     ```sh
     cd server
     ```
+
 2. **Install dependencies:**
+
     ```sh
     npm install
     ```
+
 3. **Create a `.env` file** in the `server/` directory and configure the database:
+
     ```env
-    DB_HOST=localhost
-    DB_USER=root
-    DB_PASSWORD=yourpassword
-    DB_NAME=todo_db
+     DB_HOST=localhost
+     DB_USER=root
+     DB_PASSWORD=
+     DB_NAME=
+
+     ALLOWED_ORIGIN=http://localhost:3000
+
+     AWS_REGION=
+
+     AWS_COGNITO_APP_ID=
+     AWS_COGNITO_APP_SECRET=
+     AWS_COGNITO_USER_POOL_ID=
+     AWS_COGNITO_DOMAIN=
+     AWS_COGNITO_REDIRECT_URI=http://localhost:8000/login
+     AWS_COGNITO_LOGIN_URL=
+     AWS_COGNITO_LOGOUT_URI=
+     AWS_COGNITO_FINAL_URI=http://localhost:3000
+     AWS_COGNITO_HOST_NAME=
+
+     AWS_S3_BUCKET_ACCESS_KEY_ID=
+     AWS_S3_BUCKET_SECRET_ACCESS_KEY=
+     AWS_S3_BUCKET_ARN=
+     AWS_S3_BUCKET_NAME=`
     ```
+
 4. **Start the backend server:**
+
     ```sh
     npm run dev
     ```
@@ -76,13 +102,16 @@ project-root/
 
 ## 📌 API Endpoints
 
-| Method | Endpoint     | Description                                |
-| ------ | ------------ | ------------------------------------------ |
-| GET    | `/todos`     | Get all todos                              |
-| GET    | `/todos/:id` | Get a specific todo                        |
-| POST   | `/todos`     | Create a new todo                          |
-| PUT    | `/todos/:id` | Update a todo (title, description, status) |
-| DELETE | `/todos/:id` | Delete a todo                              |
+| Method | Endpoint        | Description                                |
+| ------ | --------------- | ------------------------------------------ |
+| GET    | `/todos`        | Get all todos for logged in user           |
+| GET    | `/todos/:id`    | Get a specific todo                        |
+| POST   | `/todos`        | Create a new todo                          |
+| PUT    | `/todos/:id`    | Update a todo (title, description, status) |
+| DELETE | `/todos/:id`    | Delete a todo                              |
+| POST   | `/login`        | Log in the user                            |
+| GET    | `/auth/profile` | Get the current user's information         |
+| POST   | `/auth/logout`  | Log out the user                           |
 
 ## 🎨 Frontend Tech Stack
 
@@ -94,7 +123,7 @@ project-root/
 
 -   **Node.js (Raw)** : No Express, handling requests manually
 -   **MySQL** : Database for storing todos
--   **Raw SQL Queries** : No ORM, direct SQL execution
+-   **AWS**: Several Backend services
 
 ## 🤝 Contributions
 
@@ -103,3 +132,7 @@ Feel free to contribute by opening issues or pull requests!
 ---
 
 Made with ❤️ by Sharif-Minhaz
+
+```
+
+```
