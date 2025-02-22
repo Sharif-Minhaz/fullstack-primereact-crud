@@ -132,7 +132,3 @@ Feel free to contribute by opening issues or pull requests!
 ---
 
 Made with ❤️ by Sharif-Minhaz
-
-```
-
-```

@@ -30,7 +30,7 @@ class AuthController {
 				this.session.user = userInfo;
 				await this.session.Save();
 
-				setCookie(res, "session_id", this.session.id, 3600); //
+				setCookie(res, "session_id", this.session.id, 3600);
 
 				res.writeHead(302, { Location: process.env.AWS_COGNITO_FINAL_URI });
 				return res.end();

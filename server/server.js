@@ -13,13 +13,13 @@ const server = http.createServer(async (req, res) => {
 		// bind the app object to the request
 		req.app = app;
 
-		// Update CORS headers
+		// update CORS headers
 		const allowedOrigin =
 			process.env.NODE_ENV === "production"
 				? process.env.ALLOWED_ORIGIN
 				: "http://localhost:3000";
 
-		// Set CORS headers based on origin
+		// set CORS headers based on origin
 		const origin = req.headers.origin;
 		if (origin === allowedOrigin) {
 			res.setHeader("Access-Control-Allow-Origin", origin);
@@ -30,15 +30,14 @@ const server = http.createServer(async (req, res) => {
 
 		// handle the preflight request
 		if (req.method === "OPTIONS") {
-			res.writeHead(204); // No Content
+			res.writeHead(204);
 			return res.end();
 		}
 
 		// attach request body
-		req.body = await Tool.parseJSON(req);
+		req.body = await Tool.parseBody(req);
 
-		// auth handler for incoming requests
-		// await authRoutes(req, res);
+		console.info(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
 
 		if (req.url?.startsWith("/auth")) {
 			await authRoutes(req, res);

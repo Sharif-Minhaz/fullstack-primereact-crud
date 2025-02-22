@@ -2,11 +2,18 @@ const TodoController = require("../controllers/todoController");
 const Tool = require("../utils/tool");
 
 module.exports = async (req, res) => {
+	const baseUrl = `http://${req.headers.host}`;
+	const parsedUrl = new URL(req.url, baseUrl);
+
 	if (req.method === "GET" && req.url === "/todos") {
 		// ============ handle get request with /todos route============
 		await TodoController.getAll(req, res);
-	} else if (req.method === "GET" && req.url.startsWith("/todos/")) {
-		// ============ handle get request with /todos/:id route ===========
+	} else if (req.method === "GET" && req.url.startsWith("/todos/files")) {
+		// ============ Handle GET /todos/files?name=filename.png ============
+		console.log("hello from files route");
+		await TodoController.getFileName(req, res);
+	} else if (req.method === "GET" && /^\/todos\/\d+$/.test(parsedUrl.pathname)) {
+		// ============ Handle GET /todos/:id (Only Numbers) ============
 		const id = Tool.getParsedId(req);
 		await TodoController.getOne(req, res, id);
 	} else if (req.method === "POST" && req.url === "/todos") {

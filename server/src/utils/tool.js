@@ -1,15 +1,29 @@
-const querystring = require("querystring");
 const ResponseHandler = require("./responseHandler");
+const { formidable } = require("formidable");
 
 class Tool {
 	static getParsedId(req) {
 		const id = req.url?.split("/")[2];
 
 		if (isNaN(id)) {
-			return ResponseHandler.error(res, new Error("Invalid ID"));
+			return new Error("Invalid ID");
 		}
 
 		return id;
+	}
+
+	static parseBody(req) {
+		const contentType = req.headers["content-type"];
+
+		if (!contentType) return null;
+
+		if (contentType.includes("application/json")) {
+			return this.parseJSON(req);
+		} else if (contentType.includes("multipart/form-data")) {
+			return this.parseMultipart(req);
+		} else {
+			return null;
+		}
 	}
 
 	static parseJSON(req) {
@@ -26,6 +40,16 @@ class Tool {
 				}
 			});
 			req.on("error", reject);
+		});
+	}
+
+	static parseMultipart(req) {
+		return new Promise((resolve, reject) => {
+			const form = formidable({ multiples: true });
+			form.parse(req, (err, fields, files) => {
+				if (err) return reject(err);
+				resolve({ fields, files });
+			});
 		});
 	}
 

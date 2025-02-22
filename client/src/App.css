@@ -1,20 +1,41 @@
-/* Global Scrollbar Styling */
-::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+.max-w-36rem {
+    max-width: 36rem;
 }
 
-::-webkit-scrollbar-track {
-    background: #f3f3f3;
-    border-radius: 10px;
+.max-w-48rem {
+    max-width: 48rem;
 }
 
-::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
-    transition: background 0.3s ease-in-out;
+.bg-slate-100 {
+    background-color: #f1f5f9;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
+.size-36px {
+    height: 36px;
+    width: 36px;
+}
+
+.text-title-color {
+    color: #2d3748;
+}
+
+.text-title-color-completed {
+    color: #777e86;
+}
+
+.mt-9 {
+    margin-top: 6rem;
+}
+
+.mt-10 {
+    margin-top: 7rem;
+}
+
+.todo-description img {
+    width: 100%;
+    object-fit: cover;
+}
+
+.upload-image :is([aria-label="Upload"], [aria-label="Cancel"]) {
+    display: none;
 }

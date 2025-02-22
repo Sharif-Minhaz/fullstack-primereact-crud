@@ -2,29 +2,53 @@ const db = require("../config/db");
 
 class TodoModel {
 	async getAllTodos(user_id) {
-		return db.query("SELECT * FROM todos WHERE user = ? ORDER BY id DESC", [user_id]);
+		try {
+			return await db.query("SELECT * FROM todos WHERE user = ? ORDER BY id DESC", [user_id]);
+		} catch (error) {
+			throw new Error(`Error fetching todos: ${error.message}`);
+		}
 	}
 
 	async getTodoById(id) {
-		return db.query("SELECT * FROM todos WHERE id = ?", [id]);
+		if (!id) {
+			throw new Error("Error fetching todo by ID: Todo ID is required");
+		}
+
+		try {
+			return await db.query("SELECT * FROM todos WHERE id = ?", [id]);
+		} catch (error) {
+			throw new Error(`Error fetching todo by ID: ${error.message}`);
+		}
 	}
 
-	async createTodo(title, description, user_id) {
-		return db.query(
-			"INSERT INTO todos (title, description, status, user) VALUES (?, ?, ?, ?)",
-			[title, description, "pending", user_id]
-		);
+	async createTodo(title, description, image, user_id) {
+		try {
+			return await db.query(
+				"INSERT INTO todos (title, description, status, user, image) VALUES (?, ?, ?, ?, ?)",
+				[title, description, "pending", user_id, image]
+			);
+		} catch (error) {
+			throw new Error(`Error creating todo: ${error.message}`);
+		}
 	}
 
 	async updateTodo(id, title, description, status, user_id) {
-		return db.query(
-			"UPDATE todos SET title = ?, description = ?, status = ?, user = ? WHERE id = ?",
-			[title, description, status, user_id, id]
-		);
+		try {
+			return await db.query(
+				"UPDATE todos SET title = ?, description = ?, status = ?, user = ? WHERE id = ?",
+				[title, description, status, user_id, id]
+			);
+		} catch (error) {
+			throw new Error(`Error updating todo: ${error.message}`);
+		}
 	}
 
 	async deleteTodo(id) {
-		return db.query("DELETE FROM todos WHERE id = ?", [id]);
+		try {
+			return await db.query("DELETE FROM todos WHERE id = ?", [id]);
+		} catch (error) {
+			throw new Error(`Error deleting todo: ${error.message}`);
+		}
 	}
 }
 

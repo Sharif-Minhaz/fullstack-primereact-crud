@@ -5,12 +5,25 @@ import { Button } from "primereact/button";
 import { Link, useLocation } from "react-router";
 import { Toast } from "primereact/toast";
 import { Card } from "primereact/card";
-import { usePost } from "../hooks/usePost";
+import { useMultipartPost } from "../hooks/useMultipartPost";
 import { usePut } from "../hooks/usePut";
+import { FileUpload } from "primereact/fileupload";
+
+interface FormData {
+	id: number;
+	title: string;
+	description: string;
+	image: File | null;
+}
 
 export default function Form() {
-	const [formData, setFormData] = useState({ id: NaN, title: "", description: "" });
-	const { postData } = usePost("/todos");
+	const [formData, setFormData] = useState<FormData>({
+		id: NaN,
+		title: "",
+		description: "",
+		image: null,
+	});
+	const { postData } = useMultipartPost("/todos");
 	const { updateData } = usePut("/todos");
 	const location = useLocation();
 	const toast = useRef<Toast>(null);
@@ -19,7 +32,7 @@ export default function Form() {
 
 	useEffect(() => {
 		if (isForUpdate) {
-			setFormData(location.state);
+			setFormData(location.state as FormData);
 		}
 	}, [isForUpdate, location.state]);
 
@@ -47,7 +60,7 @@ export default function Form() {
 						: "New todo added successfully",
 				});
 				if (!isForUpdate) {
-					setFormData({ id: NaN, title: "", description: "" });
+					setFormData({ id: NaN, title: "", description: "", image: null });
 				}
 			} else {
 				throw new Error("Something went wrong");
@@ -83,11 +96,11 @@ export default function Form() {
 								onChange={(e) =>
 									setFormData((prev) => ({ ...prev, title: e.target?.value }))
 								}
-								className=" w-full"
+								className="w-full"
 							/>
 						</div>
 
-						<div className="flex flex-column gap-2">
+						<div className="flex flex-column gap-2 mb-3">
 							<label htmlFor="description" className="font-medium text-gray-600">
 								Description
 							</label>
@@ -101,11 +114,31 @@ export default function Form() {
 										description: e.htmlValue as string,
 									}))
 								}
-								style={{ height: "180px" }}
+								style={{ height: "120px" }}
 								className="bg-white shadow-1 border-round-md"
 							/>
 						</div>
-
+						<div className="flex flex-column gap-2">
+							<label htmlFor="image" className="font-medium text-gray-600">
+								Task Image
+							</label>
+							<FileUpload
+								className="upload-image"
+								chooseLabel="Upload a task image"
+								mode="advanced"
+								accept="image/*"
+								customUpload
+								emptyTemplate={
+									<p className="m-0">Drag and drop files to here to upload.</p>
+								}
+								onSelect={(e) => {
+									setFormData((prev) => ({
+										...prev,
+										image: e.files[0],
+									}));
+								}}
+							/>
+						</div>
 						<div className="flex justify-content-between align-items-center mt-3">
 							<Link to="/">
 								<Button

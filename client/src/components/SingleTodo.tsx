@@ -3,12 +3,30 @@ import { useFetch } from "../hooks/useFetch";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Skeleton } from "primereact/skeleton";
+import { useEffect, useState } from "react";
 
 export default function SingleTodo() {
 	const { id } = useParams();
 	const [item, loading] = useFetch(`/todos/${id}`);
+	const [image, setImage] = useState(null);
 
 	const todo = item?.data[0];
+
+	useEffect(() => {
+		async function fetchImage() {
+			if (todo?.image) {
+				const response = await fetch(
+					`${import.meta.env.VITE_API_BASE_URL}/todos/files?name=${todo.image}`
+				);
+				const res = await response.json();
+				if (res?.data.fileUrl) {
+					setImage(res.data.fileUrl);
+				}
+			}
+		}
+
+		fetchImage();
+	}, [todo]);
 
 	return (
 		<div className="w-full max-w-36rem mx-auto p-4">
@@ -26,9 +44,10 @@ export default function SingleTodo() {
 					<div>
 						<h2 className="text-2xl font-semibold mb-4 mt-0">{todo?.title}</h2>
 						<div
-							className="max-w-none"
+							className="max-w-full todo-description"
 							dangerouslySetInnerHTML={{ __html: todo?.description || "" }}
 						/>
+						{image && <img src={image} alt={todo?.title} className="mt-4 max-w-full" />}
 						<div className="mt-6">
 							<Link to="/">
 								<Button

@@ -1,8 +1,17 @@
 const TodoModel = require("../models/todoModel");
 const ResponseHandler = require("../utils/responseHandler.js");
 const AuthController = require("./authController");
+const S3 = require("../utils/s3");
+const fs = require("fs");
 
 class TodoController {
+	constructor() {
+		this.s3Instance = new S3(null, process.env.AWS_S3_BUCKET_NAME, {
+			accessKeyId: process.env.AWS_S3_BUCKET_ACCESS_KEY_ID,
+			secretAccessKey: process.env.AWS_S3_BUCKET_SECRET_ACCESS_KEY,
+		});
+		console.log("session:", this.session);
+	}
 	async getAll(req, res) {
 		try {
 			const user_id = AuthController.getSession()?.user?.sub;
@@ -32,7 +41,8 @@ class TodoController {
 
 	async create(req, res) {
 		try {
-			const { title, description } = req.body;
+			const { title, description } = req.body?.fields;
+			const image = req.body?.files?.image[0];
 
 			const user_id = AuthController.getSession()?.user?.sub;
 
@@ -42,11 +52,29 @@ class TodoController {
 				return ResponseHandler.error(res, new Error("Title and description are required"));
 			}
 
-			const todo = await TodoModel.createTodo(title, description, user_id);
+			const fileUrl = image ? await this.upload(image) : null;
+
+			const todo = await TodoModel.createTodo(title, description, fileUrl, user_id);
 			ResponseHandler.success(res, todo);
 		} catch (error) {
 			ResponseHandler.error(res, error);
 		}
+	}
+
+	async upload(image) {
+		if (!image) return null;
+
+		const fileStream = fs.createReadStream(image?.filepath);
+
+		const params = {
+			Bucket: process.env.AWS_S3_BUCKET_NAME,
+			Key: `uploads/${Date.now()}_${image.originalFilename}`,
+			Body: fileStream,
+			MimeType: image.mimetype,
+		};
+
+		const uploadResult = await this.s3Instance.saveFile(params);
+		return uploadResult.Location;
 	}
 
 	async update(req, res, id) {
@@ -79,11 +107,50 @@ class TodoController {
 					new Error("Todo not exist, possible already deleted")
 				);
 			}
+			const file = null;
+
+			if (file) {
+				// delete image from s3
+				await this.s3Instance.deleteObject(
+					{
+						Bucket: process.env.AWS_S3_BUCKET_NAME,
+						Key: `uploads/${file}`,
+					},
+					process.env.AWS_S3_BUCKET_NAME
+				);
+			}
 
 			ResponseHandler.success(res, todo);
 		} catch (error) {
 			ResponseHandler.error(res, error);
 		}
+	}
+
+	async getFileName(req, res) {
+		const url = new URL(req.url, `http://${req.headers.host}`);
+		const fileName = url.searchParams.get("name");
+
+		try {
+			const fileUrl = await this.fileName(fileName);
+			return ResponseHandler.success(res, { fileUrl, success: true });
+		} catch (error) {
+			console.error("Error getting file name:", error);
+			return ResponseHandler.error(res, {
+				error,
+				message: "Something happened in getFileName",
+			});
+		}
+	}
+
+	async fileName(filename) {
+		if (!filename) throw new Error("Filename is required");
+
+		console.log("filename before:", filename);
+		filename = decodeURIComponent(filename);
+		console.log("filename after:", filename);
+
+		const url = await this.s3Instance.getFileNameUrl(filename, process.env.AWS_S3_BUCKET_NAME);
+		return url;
 	}
 }
 
