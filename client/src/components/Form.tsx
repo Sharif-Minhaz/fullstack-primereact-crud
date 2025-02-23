@@ -6,8 +6,9 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { Toast } from "primereact/toast";
 import { Card } from "primereact/card";
 import { useMultipartPost } from "../hooks/useMultipartPost";
-import { usePut } from "../hooks/usePut";
 import { FileUpload } from "primereact/fileupload";
+import { Image } from "primereact/image";
+import { useMultipartPut } from "../hooks/useMultipartPut";
 
 interface FormData {
 	id: number;
@@ -25,16 +26,31 @@ export default function Form() {
 	});
 	const [uploadResetKey, setUploadResetKey] = useState(Date.now());
 	const { postData, loading } = useMultipartPost("/todos");
-	const { updateData } = usePut("/todos");
+	const { updateData, loading: updateLoading } = useMultipartPut("/todos");
 	const location = useLocation();
 	const toast = useRef<Toast>(null);
 	const navigate = useNavigate();
+	const [previewImage, setPreviewImage] = useState<string | null>(null);
 
 	const isForUpdate = !!location?.state;
 
 	useEffect(() => {
 		if (isForUpdate) {
 			setFormData(location.state as FormData);
+		}
+
+		if (location?.state?.image) {
+			fetchImage();
+		}
+
+		async function fetchImage() {
+			const response = await fetch(
+				`${import.meta.env.VITE_API_BASE_URL}/todos/files?name=${location?.state?.image}`
+			);
+			const res = await response.json();
+			if (res?.data.fileUrl) {
+				setPreviewImage(res.data.fileUrl);
+			}
 		}
 	}, [isForUpdate, location.state]);
 
@@ -46,6 +62,7 @@ export default function Form() {
 				res = await updateData(formData.id, {
 					title: formData.title,
 					description: formData.description,
+					image: formData.image,
 				});
 			} else {
 				const { id, ...rest } = formData;
@@ -127,24 +144,60 @@ export default function Form() {
 							<label htmlFor="image" className="font-medium text-gray-600">
 								Task Image
 							</label>
-							<FileUpload
-								key={uploadResetKey}
-								className="upload-image"
-								chooseLabel="Upload a task image"
-								mode="advanced"
-								accept="image/*"
-								customUpload
-								emptyTemplate={
-									<p className="m-0">Drag and drop files to here to upload.</p>
-								}
-								onSelect={(e) => {
-									setFormData((prev) => ({
-										...prev,
-										image: e.files[0],
-									}));
-								}}
-								disabled={loading}
-							/>
+							{previewImage ? (
+								<div>
+									<Image
+										src={previewImage}
+										indicatorIcon={<i className="pi pi-search"></i>}
+										alt="Task Image"
+										width="100%"
+										preview
+										className="upload-image border-round-md"
+									/>
+									<Button
+										type="button"
+										label="Remove Image"
+										size="small"
+										severity="danger"
+										icon="pi pi-trash"
+										className="p-button-text px-0"
+										onClick={() => {
+											setFormData((prev) => ({
+												...prev,
+												image: null,
+											}));
+											setPreviewImage(null);
+										}}
+									/>
+								</div>
+							) : (
+								<FileUpload
+									key={uploadResetKey}
+									className="upload-image"
+									chooseLabel="Upload a task image"
+									mode="advanced"
+									accept="image/*"
+									customUpload
+									emptyTemplate={
+										<p className="m-0">
+											Drag and drop files to here to upload.
+										</p>
+									}
+									onSelect={(e) => {
+										setFormData((prev) => ({
+											...prev,
+											image: e.files[0],
+										}));
+									}}
+									onRemove={() => {
+										setFormData((prev) => ({
+											...prev,
+											image: null,
+										}));
+									}}
+									disabled={loading}
+								/>
+							)}
 						</div>
 						<div className="flex justify-content-between align-items-center mt-3">
 							<Link to="/">
@@ -165,7 +218,7 @@ export default function Form() {
 									severity={isForUpdate ? "warning" : "success"}
 									className="border-md mr-2"
 									disabled={!formData.title || !formData.description}
-									loading={loading}
+									loading={loading || updateLoading}
 								/>
 								<Button
 									onClick={() => navigate(-1)}
@@ -175,7 +228,7 @@ export default function Form() {
 									icon="pi pi-times"
 									severity="danger"
 									className="border-md"
-									disabled={loading}
+									disabled={loading || updateLoading}
 								/>
 							</div>
 						</div>

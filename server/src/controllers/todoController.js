@@ -83,19 +83,54 @@ class TodoController {
 
 	async update(req, res, id) {
 		try {
-			const { title, description, status } = req.body;
-
+			if (!id) {
+				return ResponseHandler.badRequest(res, new Error("Todo id is required"));
+			}
 			const user_id = AuthController.getSession()?.user?.sub;
 
 			if (!user_id) return ResponseHandler.badRequest(res, "User cognito sub id not found");
 
-			const todo = await TodoModel.updateTodo(id, title, description, status, user_id);
+			const todo = await TodoModel.getTodoById(id);
 
-			if (!todo.affectedRows) {
-				return ResponseHandler.badRequest(res, new Error("Todo doesn't exist"));
+			if (!todo.length) {
+				return ResponseHandler.notFound(res, new Error("Todo not found"));
 			}
 
-			ResponseHandler.success(res, todo);
+			console.log("Update fields:", req.body.fields);
+			console.log("Update files:", req.body.files);
+
+			const { title, description, image: oldImage } = req.body?.fields;
+			const { image } = req.body?.files;
+
+			let newImageInfo = null;
+
+			if (image) {
+				newImageInfo = await this.upload(image[0]);
+
+				if (newImageInfo) {
+					newImageInfo = newImageInfo.split("/uploads/").pop();
+				}
+
+				// Delete the old image
+				if (todo[0].image) {
+					console.log("Delete old image:", todo[0].image);
+					this.deleteFile(todo[0].image);
+				}
+			}
+
+			const todoUpdate = await TodoModel.updateTodo({
+				id,
+				title: title[0],
+				description: description[0],
+				user_id,
+				image: newImageInfo || oldImage[0],
+			});
+
+			if (!todoUpdate.affectedRows) {
+				return ResponseHandler.badRequest(res, new Error("Todo did not update"));
+			}
+
+			ResponseHandler.success(res, todoUpdate);
 		} catch (error) {
 			ResponseHandler.error(res, error);
 		}
@@ -122,20 +157,25 @@ class TodoController {
 			const fileName = todoData[0].image;
 
 			if (fileName) {
-				console.log("Deleting file:", fileName);
-				await this.s3Instance.deleteObject(
-					{
-						Bucket: process.env.AWS_S3_BUCKET_NAME,
-						Key: `uploads/${fileName}`,
-					},
-					process.env.AWS_S3_BUCKET_NAME
-				);
+				// if the todo has an image, delete it
+				this.deleteFile(fileName);
 			}
 
 			ResponseHandler.success(res, todo);
 		} catch (error) {
 			ResponseHandler.error(res, error);
 		}
+	}
+
+	async deleteFile(fileName) {
+		console.log("Deleting file:", fileName);
+		await this.s3Instance.deleteObject(
+			{
+				Bucket: process.env.AWS_S3_BUCKET_NAME,
+				Key: `uploads/${fileName}`,
+			},
+			process.env.AWS_S3_BUCKET_NAME
+		);
 	}
 
 	async getFileName(req, res) {
