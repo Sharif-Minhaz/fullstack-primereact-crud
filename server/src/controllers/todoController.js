@@ -52,9 +52,13 @@ class TodoController {
 				return ResponseHandler.error(res, new Error("Title and description are required"));
 			}
 
-			const fileUrl = image ? await this.upload(image) : null;
+			let fileName = image ? await this.upload(image) : null;
 
-			const todo = await TodoModel.createTodo(title, description, fileUrl, user_id);
+			if (fileName) {
+				fileName = fileName.split("/uploads/").pop();
+			}
+
+			const todo = await TodoModel.createTodo(title, description, fileName, user_id);
 			ResponseHandler.success(res, todo);
 		} catch (error) {
 			ResponseHandler.error(res, error);
@@ -99,22 +103,30 @@ class TodoController {
 
 	async delete(_, res, id) {
 		try {
-			const todo = await TodoModel.deleteTodo(id);
+			// Fetch the todo to get the associated image file name
+			const todoData = await TodoModel.getTodoById(id);
 
-			if (!todo.affectedRows) {
+			if (!todoData.length) {
 				return ResponseHandler.badRequest(
 					res,
 					new Error("Todo not exist, possible already deleted")
 				);
 			}
-			const file = null;
 
-			if (file) {
-				// delete image from s3
+			const todo = await TodoModel.deleteTodo(id);
+
+			if (!todo.affectedRows) {
+				return ResponseHandler.badRequest(res, new Error("Failed to delete todo"));
+			}
+
+			const fileName = todoData[0].image;
+
+			if (fileName) {
+				console.log("Deleting file:", fileName);
 				await this.s3Instance.deleteObject(
 					{
 						Bucket: process.env.AWS_S3_BUCKET_NAME,
-						Key: `uploads/${file}`,
+						Key: `uploads/${fileName}`,
 					},
 					process.env.AWS_S3_BUCKET_NAME
 				);
@@ -127,10 +139,10 @@ class TodoController {
 	}
 
 	async getFileName(req, res) {
-		const url = new URL(req.url, `http://${req.headers.host}`);
-		const fileName = url.searchParams.get("name");
-
 		try {
+			const url = new URL(req.url, `http://${req.headers.host}`);
+			const fileName = url.searchParams.get("name");
+
 			const fileUrl = await this.fileName(fileName);
 			return ResponseHandler.success(res, { fileUrl, success: true });
 		} catch (error) {

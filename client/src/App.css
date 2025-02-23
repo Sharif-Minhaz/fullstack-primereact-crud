@@ -34,6 +34,7 @@
 .todo-description img {
     width: 100%;
     object-fit: cover;
+    border-radius: 0.3rem;
 }
 
 .upload-image :is([aria-label="Upload"], [aria-label="Cancel"]) {

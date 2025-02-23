@@ -10,7 +10,6 @@ module.exports = async (req, res) => {
 		await TodoController.getAll(req, res);
 	} else if (req.method === "GET" && req.url.startsWith("/todos/files")) {
 		// ============ Handle GET /todos/files?name=filename.png ============
-		console.log("hello from files route");
 		await TodoController.getFileName(req, res);
 	} else if (req.method === "GET" && /^\/todos\/\d+$/.test(parsedUrl.pathname)) {
 		// ============ Handle GET /todos/:id (Only Numbers) ============

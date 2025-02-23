@@ -4,6 +4,7 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Skeleton } from "primereact/skeleton";
 import { useEffect, useState } from "react";
+import { Image } from "primereact/image";
 
 export default function SingleTodo() {
 	const { id } = useParams();
@@ -47,7 +48,18 @@ export default function SingleTodo() {
 							className="max-w-full todo-description"
 							dangerouslySetInnerHTML={{ __html: todo?.description || "" }}
 						/>
-						{image && <img src={image} alt={todo?.title} className="mt-4 max-w-full" />}
+						{image && (
+							<div className="card flex justify-content-center">
+								<Image
+									src={image}
+									alt={todo?.title}
+									className="mt-4 border-round-md max-w-full"
+									preview
+									indicatorIcon={<i className="pi pi-search"></i>}
+									width="100%"
+								/>
+							</div>
+						)}
 						<div className="mt-6">
 							<Link to="/">
 								<Button

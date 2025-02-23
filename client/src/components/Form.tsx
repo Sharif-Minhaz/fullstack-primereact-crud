@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Editor } from "primereact/editor";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Toast } from "primereact/toast";
 import { Card } from "primereact/card";
 import { useMultipartPost } from "../hooks/useMultipartPost";
@@ -23,10 +23,12 @@ export default function Form() {
 		description: "",
 		image: null,
 	});
-	const { postData } = useMultipartPost("/todos");
+	const [uploadResetKey, setUploadResetKey] = useState(Date.now());
+	const { postData, loading } = useMultipartPost("/todos");
 	const { updateData } = usePut("/todos");
 	const location = useLocation();
 	const toast = useRef<Toast>(null);
+	const navigate = useNavigate();
 
 	const isForUpdate = !!location?.state;
 
@@ -60,6 +62,7 @@ export default function Form() {
 						: "New todo added successfully",
 				});
 				if (!isForUpdate) {
+					setUploadResetKey(Date.now());
 					setFormData({ id: NaN, title: "", description: "", image: null });
 				}
 			} else {
@@ -97,6 +100,7 @@ export default function Form() {
 									setFormData((prev) => ({ ...prev, title: e.target?.value }))
 								}
 								className="w-full"
+								disabled={loading}
 							/>
 						</div>
 
@@ -116,6 +120,7 @@ export default function Form() {
 								}
 								style={{ height: "120px" }}
 								className="bg-white shadow-1 border-round-md"
+								disabled={loading}
 							/>
 						</div>
 						<div className="flex flex-column gap-2">
@@ -123,6 +128,7 @@ export default function Form() {
 								Task Image
 							</label>
 							<FileUpload
+								key={uploadResetKey}
 								className="upload-image"
 								chooseLabel="Upload a task image"
 								mode="advanced"
@@ -137,6 +143,7 @@ export default function Form() {
 										image: e.files[0],
 									}));
 								}}
+								disabled={loading}
 							/>
 						</div>
 						<div className="flex justify-content-between align-items-center mt-3">
@@ -157,17 +164,19 @@ export default function Form() {
 									icon={isForUpdate ? "pi pi-sync" : "pi pi-check"}
 									severity={isForUpdate ? "warning" : "success"}
 									className="border-md mr-2"
+									disabled={!formData.title || !formData.description}
+									loading={loading}
 								/>
-								<Link to="/">
-									<Button
-										type="button"
-										label="Cancel"
-										size="small"
-										icon="pi pi-times"
-										severity="danger"
-										className="border-md"
-									/>
-								</Link>
+								<Button
+									onClick={() => navigate(-1)}
+									type="button"
+									label="Cancel"
+									size="small"
+									icon="pi pi-times"
+									severity="danger"
+									className="border-md"
+									disabled={loading}
+								/>
 							</div>
 						</div>
 					</form>

@@ -20,7 +20,7 @@ export default function Todo({
 	const [checked, setChecked] = useState(item?.status === "completed");
 	const toast = useRef<Toast>(null);
 	const { updateData } = usePut("/todos");
-	const { deleteData } = useDelete("/todos");
+	const { deleteData, loading: deleteLoading } = useDelete("/todos");
 
 	const accept = () => {
 		handleDelete();
@@ -93,7 +93,12 @@ export default function Todo({
 			) : (
 				<div className="flex w-full align-items-center justify-content-between px-4 py-2 mb-2 bg-white border-round-lg shadow-1 hover:shadow-2 transition-linear transition-duration-200">
 					<div className="flex align-items-center gap-3">
-						<Checkbox checked={checked} onChange={handleStatus} className="w-5 h-5" />
+						<Checkbox
+							disabled={deleteLoading}
+							checked={checked}
+							onChange={handleStatus}
+							className="w-5 h-5"
+						/>
 						<Link
 							to={`/todo/${item.id}`}
 							className={`${checked ? "" : "hover:underline"} no-underline`}
@@ -115,6 +120,7 @@ export default function Todo({
 							<Button
 								className="size-36px"
 								rounded
+								disabled={deleteLoading}
 								text
 								raised
 								severity="help"
@@ -124,8 +130,8 @@ export default function Todo({
 						</Link>
 						<Button
 							onClick={confirm}
+							loading={deleteLoading}
 							className="size-36px"
-							size="small"
 							rounded
 							icon="pi pi-trash"
 							text
